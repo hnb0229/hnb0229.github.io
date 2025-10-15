@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>카드 카운터</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: row;
+            justify-content: space-around;
+            align-items: flex-start;
+            text-align: center;
+            background-color: #f0f0f0;
+            padding: 20px;
+            gap: 40px;
+        }
+
+        .counter-container {
+            width: 45%;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        .card-counts, .card-buttons {
+            margin-top: 20px;
+        }
+
+        .card-buttons button {
+            padding: 15px 30px;
+            font-size: 20px;
+            margin: 5px;
+            cursor: pointer;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background-color: #fff;
+            transition: background-color 0.3s;
+        }
+
+        .card-buttons button:hover {
+            background-color: #e0e0e0;
+        }
+
+        .display-container {
+            border: 1px solid #ddd;
+            padding: 15px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+
+        .display-container p {
+            font-size: 18px;
+            font-weight: bold;
+            margin: 5px 0;
+        }
+
+        .card-images img {
+            width: 80px;
+            height: auto;
+            margin: 5px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        
+        .reset-button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: #f44336;
+            color: white;
+            border: none;
+            border-radius: 5px;
+        }
+
+        .reset-button:hover {
+            background-color: #d32f2f;
+        }
+    </style>
+</head>
+<body>
+    <div class="counter-container">
+        <h1>카드 카운터1</h1>
+        <div class="card-counts">
+            <p>남은 카드 수:</p>
+            <div id="display-container-1" class="display-container"></div>
+        </div>
+        <div class="card-buttons">
+            <p>카드를 내세요:</p>
+            <button onclick="playCard(1, 1)">1</button>
+            <button onclick="playCard(1, 2)">2</button>
+            <button onclick="playCard(1, 3)">3</button>
+            <button onclick="playCard(1, 4)">4</button>
+            <button onclick="playCard(1, 5)">5</button>
+            <button onclick="playCard(1, 6)">6</button>
+            <button onclick="playCard(1, 7)">7</button>
+            <button onclick="playCard(1, 8)">8</button>
+            <button onclick="playCard(1, 9)">9</button>
+        </div>
+        <button class="reset-button" onclick="resetCounter(1)">초기화</button>
+        <div id="card-images-1" class="card-images"></div>
+    </div>
+
+    <div class="counter-container">
+        <h1>카드 카운터2</h1>
+        <div class="card-counts">
+            <p>남은 카드 수:</p>
+            <div id="display-container-2" class="display-container"></div>
+        </div>
+        <div class="card-buttons">
+            <p>카드를 내세요:</p>
+            <button onclick="playCard(2, 1)">1</button>
+            <button onclick="playCard(2, 2)">2</button>
+            <button onclick="playCard(2, 3)">3</button>
+            <button onclick="playCard(2, 4)">4</button>
+            <button onclick="playCard(2, 5)">5</button>
+            <button onclick="playCard(2, 6)">6</button>
+            <button onclick="playCard(2, 7)">7</button>
+            <button onclick="playCard(2, 8)">8</button>
+            <button onclick="playCard(2, 9)">9</button>
+        </div>
+        <button class="reset-button" onclick="resetCounter(2)">초기화</button>
+        <div id="card-images-2" class="card-images"></div>
+    </div>
+
+    <script>
+        // 초기 카드 수 설정
+        const initialCards = {
+            1: 10,
+            2: 5,
+            3: 4,
+            4: 3,
+            5: 2,
+            6: 2,
+            7: 2,
+            8: 1,
+            9: 1
+        };
+
+        // 각 카운터의 상태를 별도로 관리하기 위한 객체
+        let counters = {
+            1: { ...initialCards },
+            2: { ...initialCards }
+        };
+
+        // 카드 총합 계산 함수
+        function getTotalCards(counterNum) {
+            return Object.values(counters[counterNum]).reduce((sum, count) => sum + count, 0);
+        }
+
+        // 화면을 업데이트하는 함수 (어떤 카운터를 업데이트할지 지정)
+        function updateDisplay(counterNum) {
+            const displayContainer = document.getElementById(`display-container-${counterNum}`);
+            displayContainer.innerHTML = '';
+            
+            const currentCards = counters[counterNum];
+            for (const cardNum in currentCards) {
+                const p = document.createElement('p');
+                p.textContent = `숫자 ${cardNum}: ${currentCards[cardNum]}개`;
+                displayContainer.appendChild(p);
+            }
+            
+            const totalP = document.createElement('p');
+            totalP.textContent = `총 남은 카드 수: ${getTotalCards(counterNum)}개`;
+            totalP.style.marginTop = '10px';
+            totalP.style.color = '#007bff';
+            displayContainer.appendChild(totalP);
+        }
+
+        // 카드를 내는(플레이하는) 함수
+        function playCard(counterNum, cardNum) {
+            if (counters[counterNum][cardNum] > 0) {
+                counters[counterNum][cardNum]--;
+                updateDisplay(counterNum);
+
+                console.log(`카드 카운터 ${counterNum}에서 카드 ${cardNum}을(를) 냈습니다. 남은 수: ${counters[counterNum][cardNum]}`);
+            } else {
+                const isConsonant = [1, 3, 6, 7, 8].includes(cardNum);
+                const particle = isConsonant ? '이' : '가';
+                
+                alert(`카드 카운터 ${counterNum}에는 숫자 ${cardNum}${particle} 더 이상 없습니다!`);
+            }
+        }
+
+        // 카운터 초기화 함수
+        function resetCounter(counterNum) {
+            // 초기 상태로 카드 수를 복사
+            counters[counterNum] = { ...initialCards };
+            // 화면 업데이트
+            updateDisplay(counterNum);
+            // 표시된 카드 이미지 삭제
+            const cardImageDiv = document.getElementById(`card-images-${counterNum}`);
+            cardImageDiv.innerHTML = '';
+            console.log(`카드 카운터 ${counterNum}가 초기화되었습니다.`);
+        }
+
+        // 페이지 로드 시 두 카운터 모두 초기 화면 업데이트
+        document.addEventListener('DOMContentLoaded', () => {
+            updateDisplay(1);
+            updateDisplay(2);
+        });
+    </script>
+</body>
+</html>
